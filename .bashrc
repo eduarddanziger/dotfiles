@@ -8,16 +8,21 @@ case $- in
       *) return;;
 esac
 
+# Ensure persistent bash history directory exists
+mkdir -p /workspaces/.bash_history
+chmod 700 /workspaces/.bash_history
+touch /workspaces/.bash_history/history
+chmod 600 /workspaces/.bash_history/history
+
+# History settings
+export HISTFILE=/workspaces/.bash_history/history
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+shopt -s histappend
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -160,15 +165,10 @@ if [[ "$TERM" == "xterm" ]]; then
     PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }precmd"
 fi
 
-export NVM_DIR="/usr/local/share/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Save bash history to a persistent file
-export HISTFILE=/workspaces/.bash_history/history
-export HISTSIZE=1000
-export HISTFILESIZE=2000
-shopt -s histappend
+# Load NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Automatically save history after every command
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
